@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from knc import ASICBoard
+from knc import device
 
-board = ASICBoard(0, 'B', 'G')
-print(board.get_status())
+boards = device.open_boards()
+print(boards[0].get_status())
