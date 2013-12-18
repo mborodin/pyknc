@@ -14,7 +14,7 @@ def on_off_red_led():
 
 def blink_rgb():
     rgb = led.get_led('rgb')
-    rgb.set_mode(led.LED_MODE_BLINKING)
+    rgb.set_mode(led.MODE_BLINKING)
     rgb.on()
     time.sleep(30)
     rgb.off()
@@ -22,12 +22,12 @@ def blink_rgb():
 
 def blink_leds():
     l = led.get_led('green')
-    l.set_mode(led.LED_MODE_BLINKING)
+    l.set_mode(led.MODE_BLINKING)
     l.frequency = 5
     l.on()
 
     l = led.get_led('rgb')
-    l.set_mode(led.LED_MODE_BLINKING)
+    l.set_mode(led.MODE_BLINKING)
     l.frequency = 10
     l.on()
 
