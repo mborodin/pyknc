@@ -31,8 +31,7 @@ def _remove_blinking_led(led):
 
 
 def shutdown_blinking_leds():
-    while len(__blinking_leds) != 0:
-        led = __blinking_leds.pop()
+    for led in list(__blinking_leds):
         led.off()
 
 

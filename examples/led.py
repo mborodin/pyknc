@@ -30,6 +30,7 @@ def blink_leds():
     l.set_mode(led.MODE_BLINKING)
     l.frequency = 10
     l.on()
+    l.set_value(led.RED | led.GREEN)
 
     time.sleep(15)
     l.frequency = 20
@@ -39,6 +40,6 @@ def blink_leds():
 
 
 if __name__ == '__main__':
-    on_off_red_led()
-    blink_rgb()
+    #on_off_red_led()
+    #blink_rgb()
     blink_leds()
