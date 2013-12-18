@@ -4,6 +4,23 @@ import time
 
 __blinking_leds = []
 
+_LED_RED = '/sys/class/gpio/gpio70/direction'
+_LED_GREEN = '/sys/class/gpio/gpio71/direction'
+
+_FPGA_BUS = 2
+_FPGA_DEV = 0x71
+_LED_RGB = 5
+
+LED_RED = 4
+LED_GREEN = 2
+LED_BLUE = 1
+LED_WHITE = 7
+LED_OFF = 0
+LED_ON = LED_WHITE
+
+LED_MODE_CONST = 0
+LED_MODE_BLINKING = 1
+
 
 def _add_blinking_led(led):
     __blinking_leds.append(led)
@@ -18,18 +35,8 @@ def shutdown_blinking_leds():
         led = __blinking_leds.pop()
         led.off()
 
-_LED_RED = '/sys/class/gpio/gpio70/direction'
-_LED_GREEN = '/sys/class/gpio/gpio71/direction'
-
-_FPGA_BUS = 2
-_FPGA_DEV = 0x71
-_LED_RGB = 5
-
 
 class Led:
-    CONST = 0
-    BLINKING = 1
-
     def __init__(self, file):
         self.file = file
         self._on = 'low'
@@ -39,7 +46,7 @@ class Led:
         self.frequency = 2  # 2 Hz is default blinking frequency
         self.is_blinking = False
         self.thread = None
-        self.mode = Led.CONST
+        self.mode = LED_MODE_CONST
 
     def set_state(self, state):
         fout = open(self.file, 'w')
@@ -51,7 +58,7 @@ class Led:
         self.mode = mode
 
     def on(self):
-        if self.mode == Led.BLINKING:
+        if self.mode == LED_MODE_BLINKING:
             self.thread = threading.Thread(target=self._run)
             self.is_blinking = True
             _add_blinking_led(self)
@@ -60,7 +67,7 @@ class Led:
             self.set_state(self.saved_state)
 
     def off(self):
-        if self.mode == Led.BLINKING:
+        if self.mode == LED_MODE_BLINKING:
             self.is_blinking = False
             self.thread.join()
             _remove_blinking_led(self)
@@ -92,16 +99,11 @@ class Led:
 
 
 class RGBLed(Led):
-    RED = 4
-    GREEN = 2
-    BLUE = 1
-    WHITE = 7
-    OFF = 0
 
     def __init__(self):
         super().__init__('')
-        self._on = RGBLed.WHITE
-        self._off = RGBLed.OFF
+        self._on = LED_WHITE
+        self._off = LED_OFF
         self.current_state = self._off
         self.saved_state = self._on
         self.bus = smbus.SMBus(_FPGA_BUS)
@@ -115,7 +117,7 @@ class RGBLed(Led):
         self.set_state(v)
 
     def invert(self):
-        new_state = RGBLed.OFF if self.current_state != RGBLed.OFF else self.saved_state
+        new_state = LED_OFF if self.current_state != LED_OFF else self.saved_state
         self.set_state(new_state)
 
 
